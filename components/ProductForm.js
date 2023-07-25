@@ -11,7 +11,7 @@ export default function ProductForm({
   price: existingPrice,
   images: existingImages,
   category: existingCategory,
-  properties: existingProperties
+  properties: existingProperties,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [description, setDescription] = useState(existingDescription || "");
@@ -19,7 +19,9 @@ export default function ProductForm({
   const [category, setCategory] = useState(existingCategory || "");
   const [goToProducts, setGoToProducts] = useState(false);
   const [images, setImages] = useState(existingImages || []);
-  const [productProperties, setProductProperties] = useState(existingProperties || {});
+  const [productProperties, setProductProperties] = useState(
+    existingProperties || {}
+  );
   const [isUpload, setIsUpload] = useState(false);
   const [categories, setCategories] = useState([]);
   const router = useRouter();
