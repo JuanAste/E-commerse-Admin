@@ -163,7 +163,7 @@ function Categories({ swal }) {
                   }
                 />
                 <button
-                  className="btn-default"
+                  className="btn-red"
                   onClick={() => removeProperty(index)}
                   type="button"
                 >
@@ -207,15 +207,15 @@ function Categories({ swal }) {
                 <tr key={category._id}>
                   <td>{category.name}</td>
                   <td>{category.parent?.name}</td>
-                  <td>
+                  <td className="text-center"  >
                     <button
-                      className="btn-primary mr-1"
+                      className="btn-primary mr-1 mb-1"
                       onClick={() => editCategory(category)}
                     >
                       Edit
                     </button>
                     <button
-                      className="btn-primary"
+                      className="btn-red"
                       onClick={() => deleteCategory(category)}
                     >
                       Delete
