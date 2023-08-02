@@ -37,11 +37,11 @@ table.basic {
 
 table.basic thead tr td,
 table.basic thead tr th {
-  @apply text-sm text-blue-900 uppercase border-b border-blue-200 px-4 py-2;
+  @apply text-sm text-blue-900 uppercase border-b border-blue-200 px-4 py-2 text-center;
 }
 
 table.basic tr td {
-  @apply px-4 py-1;
+  @apply px-4 py-1 text-center;
 }
 
 table.basic a {
@@ -51,6 +51,10 @@ table.basic a {
 .btn-default,
 .btn-red {
   @apply px-4 py-1 rounded-md;
+}
+
+.btn-green {
+  @apply bg-green-800 text-white px-4 py-1 rounded-sm;
 }
 
 .btn-red {

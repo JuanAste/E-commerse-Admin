@@ -11,12 +11,36 @@ export default async function handler(req, res) {
     if (req.query?.id) {
       res.json(await Product.findOne({ _id: req.query?.id }));
     } else {
-      res.json(await Product.find());
+      const { page, title } = req.query;
+      const pageNumber = page || 1;
+      const skipCount = (pageNumber - 1) * 12;
+
+      const findProducts = {};
+
+      if (title) {
+        findProducts.title = {
+          $regex: new RegExp(title, "i"),
+        };
+      }
+
+      const products = await Product.find(findProducts)
+        .skip(skipCount)
+        .limit(12);
+
+      res.json(products);
     }
   }
   if (method === "POST") {
-    const { title, description, price, images, category, properties } =
-      req.body;
+    const {
+      title,
+      description,
+      price,
+      images,
+      category,
+      properties,
+      stock,
+      enabled,
+    } = req.body;
     const productDoc = await Product.create({
       title,
       description,
@@ -24,15 +48,35 @@ export default async function handler(req, res) {
       images,
       category,
       properties,
+      stock,
+      enabled,
     });
     res.json(productDoc);
   }
   if (method === "PUT") {
-    const { title, description, price, images, category, properties, _id } =
-      req.body;
+    const {
+      title,
+      description,
+      price,
+      images,
+      category,
+      properties,
+      stock,
+      enabled,
+      _id,
+    } = req.body;
     await Product.updateOne(
       { _id },
-      { title, description, price, images, category, properties }
+      {
+        title,
+        description,
+        price,
+        images,
+        category,
+        properties,
+        stock,
+        enabled,
+      }
     );
     res.json(true);
   }

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import { ReactSortable } from "react-sortablejs";
+import { redirect } from "next/dist/server/api-utils";
 
 export default function ProductForm({
   _id,
@@ -12,16 +13,20 @@ export default function ProductForm({
   images: existingImages,
   category: existingCategory,
   properties: existingProperties,
+  stock: existingStock,
+  enabled: existingEnabled,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [description, setDescription] = useState(existingDescription || "");
-  const [price, setPrice] = useState(existingPrice || "");
+  const [price, setPrice] = useState(existingPrice || null);
   const [category, setCategory] = useState(existingCategory || "");
   const [goToProducts, setGoToProducts] = useState(false);
   const [images, setImages] = useState(existingImages || []);
   const [productProperties, setProductProperties] = useState(
     existingProperties || {}
   );
+  const [stock, setStock] = useState(existingStock || null);
+  const [enabled, setEnabled] = useState(existingEnabled || false);
   const [isUpload, setIsUpload] = useState(false);
   const [categories, setCategories] = useState([]);
   const router = useRouter();
@@ -41,6 +46,8 @@ export default function ProductForm({
       images,
       category,
       properties: productProperties,
+      stock,
+      enabled,
     };
     if (_id) {
       //update
@@ -200,16 +207,30 @@ export default function ProductForm({
         value={price}
         onChange={(ev) => setPrice(ev.target.value)}
       />
-      {propertiesToFill.length > 0 && (
-        <button
-          onClick={() => {
-            propertiesToFill = [];
-          }}
-          className="btn-default mr-1"
-        >
-          Cancel
-        </button>
-      )}
+      <label>Stock</label>
+      <input
+        type="number"
+        placeholder="Stock"
+        value={stock}
+        onChange={(ev) => setStock(ev.target.value)}
+      />
+      <label className="block">Product status</label>
+      <button
+        onClick={() => setEnabled(!enabled)}
+        className={(enabled ? "btn-green" : "btn-red") + " block mb-2"}
+        type="button"
+      >
+        {enabled ? "Enabled" : "disabled"}
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          router.push("/products");
+        }}
+        className="btn-default mr-1"
+      >
+        Cancel
+      </button>
       <button type="submit" className="btn-primary">
         Save
       </button>

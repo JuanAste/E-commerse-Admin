@@ -1,20 +1,19 @@
 const { Schema, model, models } = require("mongoose");
 
-const OrderSchema = new Schema(
+const UserSchema = new Schema(
   {
-    line_items: Object,
     name: String,
     email: String,
+    image: String,
+    ban: Boolean,
     city: String,
     postalCode: String,
     streetAddress: String,
     country: String,
-    paid: Boolean,
-    delivered: Boolean,
   },
   {
     timestamps: true,
   }
 );
 
-export const Order = models.Order || model("Order", OrderSchema);
+export const User = models.User || model("User", UserSchema);

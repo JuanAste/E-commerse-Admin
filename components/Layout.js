@@ -1,4 +1,4 @@
-import { useSession, signIn } from "next-auth/react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import Nav from "@/components/Nav";
 import { useState } from "react";
 import Logo from "./Logo";
@@ -6,7 +6,11 @@ import Logo from "./Logo";
 export default function Layout({ children }) {
   const [showNav, setShowNav] = useState(false);
   const { data: session } = useSession();
-  if (!session) {
+
+  if (!session || session?.notAdmin) {
+    if (session?.notAdmin) {
+      signOut();
+    }
     return (
       <div className="bg-blue-900 w-screen h-screen flex items-center">
         <div className="text-center w-full">
@@ -38,7 +42,7 @@ export default function Layout({ children }) {
           </svg>
         </button>
         <div className="flex grow justify-center ">
-        <Logo />
+          <Logo />
         </div>
       </div>
       <div className=" flex">
