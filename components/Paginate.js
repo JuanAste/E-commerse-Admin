@@ -4,6 +4,7 @@ export default function Paginate({
   disabledButton,
   setDisabledButton,
   params,
+  amount,
 }) {
   return (
     <div className="flex gap-8 justify-center mt-3">
@@ -16,7 +17,7 @@ export default function Paginate({
       </button>
       <h2 className="font-medium mb-0 mt-1">{page}</h2>
       <button
-        disabled={!params.length || params.length < 5 || disabledButton}
+        disabled={!params.length || params.length < amount || disabledButton}
         onClick={() => {
           setPage(page + 1);
           setDisabledButton(true);

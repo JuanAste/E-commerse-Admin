@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import { ReactSortable } from "react-sortablejs";
-import { redirect } from "next/dist/server/api-utils";
+import propertiesToFillFunc from "@/functions/propertiesToFillFunc";
+import PropertiesProduct from "./PropertiesProdutc";
 
 export default function ProductForm({
   _id,
@@ -20,7 +21,6 @@ export default function ProductForm({
   const [description, setDescription] = useState(existingDescription || "");
   const [price, setPrice] = useState(existingPrice || null);
   const [category, setCategory] = useState(existingCategory || "");
-  const [goToProducts, setGoToProducts] = useState(false);
   const [images, setImages] = useState(existingImages || []);
   const [productProperties, setProductProperties] = useState(
     existingProperties || {}
@@ -56,7 +56,7 @@ export default function ProductForm({
       //create
       await axios.post("/api/products", data);
     }
-    setGoToProducts(true);
+    router.push("/products");
   }
 
   async function uploadImages(ev) {
@@ -65,15 +65,13 @@ export default function ProductForm({
       setIsUpload(true);
       const data = new FormData();
       for (const file of files) {
-        data.append("image", file);
+        data.append("file", file);
       }
-      const res = await axios.post(
-        `https://api.imgbb.com/1/upload?key=02db79131eba12825dfe41552909c850`,
-        data
-      );
-      const url = res?.data.data.url;
+      const res = await axios.post(`/api/upload`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setImages((oldImages) => {
-        return [...oldImages, url];
+        return [...oldImages, ...res.data.links];
       });
       setIsUpload(false);
     }
@@ -83,32 +81,7 @@ export default function ProductForm({
     setImages(images);
   }
 
-  function handleProductProp(propName, value) {
-    setProductProperties((prev) => {
-      const newProductProps = { ...prev };
-      newProductProps[propName] = value;
-      return newProductProps;
-    });
-  }
-
-  let propertiesToFill = [];
-  if (categories.length > 0 && category) {
-    let catInfo = categories.find(({ _id }) => _id === category);
-    if (catInfo) {
-      propertiesToFill.push(...catInfo?.properties);
-    }
-    while (catInfo?.parent?._id) {
-      const parentCat = categories.find(
-        ({ _id }) => _id == catInfo?.parent?._id
-      );
-      propertiesToFill.push(...parentCat.properties);
-      catInfo = parentCat;
-    }
-  }
-
-  if (goToProducts) {
-    router.push("/products");
-  }
+  const propertiesToFill = propertiesToFillFunc(categories, category);
 
   return (
     <form onSubmit={saveProduct}>
@@ -129,24 +102,13 @@ export default function ProductForm({
             </option>
           ))}
       </select>
-      {propertiesToFill.length > 0 &&
-        propertiesToFill.map((p, index) => (
-          <div key={index}>
-            <label>{p.name[0].toUpperCase() + p.name.substring(1)}</label>
-            <div>
-              <select
-                value={productProperties[p.name]}
-                onChange={(ev) => handleProductProp(p.name, ev.target.value)}
-              >
-                {p.values.map((v, index) => (
-                  <option key={index} value={v}>
-                    {v}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        ))}
+      {propertiesToFill.length > 0 && (
+        <PropertiesProduct
+          propertiesToFill={propertiesToFill}
+          properties={productProperties}
+          setProperties={setProductProperties}
+        />
+      )}
       <label>Photos</label>
       <div className="mb-2 flex flex-wrap gap-1">
         <ReactSortable

@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^1.0.0",
+    "@aws-sdk/client-s3": "^3.386.0",
     "axios": "^1.4.0",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.10",
+    "mime-types": "^2.1.35",
     "mongodb": "^5.7.0",
     "mongoose": "^7.4.0",
     "multiparty": "^4.2.3",

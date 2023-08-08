@@ -191,6 +191,7 @@ function UsersPage({ swal }) {
               disabledButton={disabledButton}
               setDisabledButton={setDisabledButton}
               params={users}
+              amount={5}
             />
           </div>
         </div>

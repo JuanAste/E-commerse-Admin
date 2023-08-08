@@ -1,32 +1,55 @@
 import Layout from "@/components/Layout";
 import Paginate from "@/components/Paginate";
+import PropertiesProduct from "@/components/PropertiesProdutc";
+import handleProductProp from "@/functions/handleProductProp";
+import propertiesToFillFunc from "@/functions/propertiesToFillFunc";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
-  const [searchTitle, setSearchTitle] = useState("");
+  const [categories, setCategories] = useState([]);
   const [page, setPage] = useState(1);
   const [disabledButton, setDisabledButton] = useState(false);
 
+  //filters
+  const [searchTitle, setSearchTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [properties, setProperties] = useState("");
+
   useEffect(() => {
     getServerProducts();
-  }, [page]);
+    axios.get("/api/categories").then((result) => {
+      setCategories(result.data);
+    });
+  }, [page, category, properties]);
+
 
   function getServerProducts() {
     let data = `?page=${page}`;
 
     if (searchTitle) {
-      data += "&&title=" + searchTitle;
+      data += `&&title=${searchTitle}`;
+    }
+    if (category) {
+      data += `&&category=${category}`;
+    }
+    if (properties && category) {
+      let i = 0;
+      for (const key in properties) {
+        data += `&&name${i}=${key}&&value${i}=${properties[key]}`;
+        i++;
+      }
     }
 
     axios
       .get("/api/products" + data)
       .then((response) => {
         if (!response.data.length) {
-          setPage(page - 1);
+          setPage(page > 1 ? page - 1 : page);
           setDisabledButton(false);
+          setProducts(response.data);
         } else {
           setProducts(response.data);
           setDisabledButton(false);
@@ -50,46 +73,82 @@ export default function Products() {
     await axios.put("/api/products", data).catch((error) => console.log(error));
   }
 
+  const propertiesToFill = propertiesToFillFunc(categories, category);
+
   return (
     <Layout>
       <Link href={"/products/new"} className="btn-primary">
         Add new product
       </Link>
-      <div className=" flex mt-4 justify-center">
-        <input
-          onKeyDown={(ev) => {
-            if (ev.key === "Enter") {
-              getServerProducts();
-            }
-          }}
-          type="text"
-          placeholder="Search product name"
-          value={searchTitle}
-          onChange={(ev) => setSearchTitle(ev.target.value)}
-          className=" h-10  w-96"
-        />
+      <div>
         <div>
-          <button
-            onClick={() => getServerProducts()}
-            className="btn-default h-10 "
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+          <div className=" flex mt-4 justify-center">
+            <input
+              onKeyDown={(ev) => {
+                if (ev.key === "Enter") {
+                  getServerProducts();
+                }
+              }}
+              type="text"
+              placeholder="Search product name"
+              value={searchTitle}
+              onChange={(ev) => setSearchTitle(ev.target.value)}
+              className=" h-10  w-96"
+            />
+            <div>
+              <button
+                onClick={() => getServerProducts()}
+                className="btn-default h-10 "
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div className=" text-center flex gap-5 flex-wrap ">
+            <div className=" w-96">
+              <label>Category</label>
+              <select
+                value={category}
+                onChange={(ev) => {
+                  setCategory(ev.target.value);
+                }}
+                className=" text-center"
+              >
+                <option value={""}>Uncategorized</option>
+                {categories.length &&
+                  categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+            {propertiesToFill.length > 0 && (
+              <PropertiesProduct
+                propertiesToFill={propertiesToFill}
+                properties={properties}
+                setProperties={setProperties}
+                classname={"flex text-center gap-5"}
               />
-            </svg>
-          </button>
+            )}
+          </div>
         </div>
       </div>
+
       <div style={{ minHeight: "530px" }}>
         <table className="basic mt-2">
           <thead>
@@ -162,12 +221,14 @@ export default function Products() {
           </tbody>
         </table>
       </div>
+
       <Paginate
         page={page}
         setPage={setPage}
         disabledButton={disabledButton}
         setDisabledButton={setDisabledButton}
         params={products}
+        amount={12}
       />
     </Layout>
   );

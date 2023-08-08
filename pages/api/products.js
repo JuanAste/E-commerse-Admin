@@ -1,6 +1,7 @@
 import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Product";
 import { isAdminRequest } from "./auth/[...nextauth]";
+import { Category } from "@/models/Category";
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -11,9 +12,22 @@ export default async function handler(req, res) {
     if (req.query?.id) {
       res.json(await Product.findOne({ _id: req.query?.id }));
     } else {
-      const { page, title } = req.query;
+      const { page, title, category } = req.query;
       const pageNumber = page || 1;
       const skipCount = (pageNumber - 1) * 12;
+
+      // Build array of properties
+      const propertiesArray = [];
+      let i = 0;
+
+      while (req.query[`name${i}`]) {
+        const newProp = {
+          name: [req.query[`name${i}`]],
+          value: req.query[`value${i}`],
+        };
+        propertiesArray.push(newProp);
+        i++;
+      }
 
       const findProducts = {};
 
@@ -21,6 +35,24 @@ export default async function handler(req, res) {
         findProducts.title = {
           $regex: new RegExp(title, "i"),
         };
+      }
+
+      if (category) {
+        findProducts.category = [category];
+        const categorydb = await Category.findById(category);
+        if (!categorydb?.parent) {
+          const categoriesParent = await Category.find({ parent: category });
+          for (const categ of categoriesParent) {
+            findProducts.category.push(categ._id);
+          }
+        }
+      }
+
+      // Add properties to the findProducts object
+      if (propertiesArray.length) {
+        for (const prop of propertiesArray) {
+          findProducts[`properties.${prop.name}`] = prop.value;
+        }
       }
 
       const products = await Product.find(findProducts)
