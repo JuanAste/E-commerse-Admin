@@ -19,7 +19,7 @@ export default function EditProductPage() {
   return (
     <Layout>
       <h1>Edit product</h1>
-      {productInfo && <ProductForm {...productInfo} />}
+      {!!productInfo && <ProductForm {...productInfo} />}
     </Layout>
   );
 }

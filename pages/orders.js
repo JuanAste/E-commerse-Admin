@@ -9,6 +9,22 @@ export default function OrdersPage() {
       setOrders(response.data);
     });
   }, []);
+
+  async function statusClick(order) {
+    const data = { status: !order.delivered, _id: order._id };
+    setOrders((prev) => {
+      const update = prev.map((prod) => {
+        if (prod._id === order._id) {
+          return { ...prod, delivered: !order.delivered };
+        } else {
+          return prod;
+        }
+      });
+      return update;
+    });
+    await axios.put("/api/orders", data);
+  }
+
   return (
     <Layout>
       <h1>Orders</h1>
@@ -18,7 +34,9 @@ export default function OrdersPage() {
             <th>Date</th>
             <th>Paid</th>
             <th>Recipient</th>
+            <th>Postal code</th>
             <th>Products</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -31,9 +49,10 @@ export default function OrdersPage() {
                 </td>
                 <td>
                   {order.name} {order.email} <br />
-                  {order.city} {order.postalCode} {order.country} <br />
+                  {order.city} {order.country} <br />
                   {order.streetAddress}
                 </td>
+                <td>{order.postalCode}</td>
                 <td>
                   {order.line_items?.map((l) => (
                     <>
@@ -41,6 +60,16 @@ export default function OrdersPage() {
                       <br />
                     </>
                   ))}
+                </td>
+                <td>
+                  <button
+                    className="btn-primary"
+                    onClick={() => {
+                      statusClick(order);
+                    }}
+                  >
+                    {order.delivered ? "Delivered" : "Undelivered"}
+                  </button>
                 </td>
               </tr>
             ))}

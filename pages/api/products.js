@@ -39,13 +39,13 @@ export default async function handler(req, res) {
 
       if (category) {
         findProducts.category = [category];
-        const categorydb = await Category.findById(category);
-        if (!categorydb?.parent) {
-          const categoriesParent = await Category.find({ parent: category });
-          for (const categ of categoriesParent) {
-            findProducts.category.push(categ._id);
-          }
+        // const categorydb = await Category.findById(category);
+        // if (!categorydb?.parent) {
+        const categoriesParent = await Category.find({ parent: category });
+        for (const categ of categoriesParent) {
+          findProducts.category.push(categ._id);
         }
+        // }
       }
 
       // Add properties to the findProducts object
