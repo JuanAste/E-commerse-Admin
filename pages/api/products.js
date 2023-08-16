@@ -59,6 +59,7 @@ export default async function handler(req, res) {
         if (stock === "noStock") {
           findProducts.$or = [
             { stock: { $eq: 0 } },
+            { stock: { $eq: null } },
             { stock: { $exists: false } },
           ];
         } else {

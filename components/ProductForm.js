@@ -25,7 +25,7 @@ export default function ProductForm({
   const [productProperties, setProductProperties] = useState(
     existingProperties || {}
   );
-  const [stock, setStock] = useState(existingStock || 0);
+  const [stock, setStock] = useState(existingStock || null);
   const [enabled, setEnabled] = useState(existingEnabled || false);
   const [isUpload, setIsUpload] = useState(false);
   const [categories, setCategories] = useState([]);
