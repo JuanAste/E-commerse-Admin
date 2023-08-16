@@ -17,14 +17,15 @@ export default function Products() {
   const [searchTitle, setSearchTitle] = useState("");
   const [category, setCategory] = useState("");
   const [properties, setProperties] = useState("");
+  const [stock, setStock] = useState("");
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     getServerProducts();
     axios.get("/api/categories").then((result) => {
       setCategories(result.data);
     });
-  }, [page, category, properties]);
-
+  }, [page, category, properties, stock, status]);
 
   function getServerProducts() {
     let data = `?page=${page}`;
@@ -41,6 +42,13 @@ export default function Products() {
         data += `&&name${i}=${key}&&value${i}=${properties[key]}`;
         i++;
       }
+    }
+    if (stock) {
+      data += `&&stock=${stock}`;
+    }
+
+    if (status) {
+      data += `&&status=${status}`;
     }
 
     axios
@@ -125,6 +133,9 @@ export default function Products() {
                 value={category}
                 onChange={(ev) => {
                   setCategory(ev.target.value);
+                  if (!ev.target.value) {
+                    setProperties("");
+                  }
                 }}
                 className=" text-center"
               >
@@ -135,6 +146,30 @@ export default function Products() {
                       {category.name}
                     </option>
                   ))}
+              </select>
+            </div>
+            <div>
+              <label>Stock</label>
+              <select
+                onChange={(ev) => {
+                  setStock(ev.target.value);
+                }}
+              >
+                <option value="">All</option>
+                <option value="withStock">With stock</option>
+                <option value="noStock">No stock</option>
+              </select>
+            </div>
+            <div>
+              <label>Status</label>
+              <select
+                onChange={(ev) => {
+                  setStatus(ev.target.value);
+                }}
+              >
+                <option value="">All</option>
+                <option value="enable">Enable</option>
+                <option value="disable">Disable</option>
               </select>
             </div>
             {propertiesToFill.length > 0 && (

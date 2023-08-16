@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     if (req.query?.id) {
       res.json(await Product.findOne({ _id: req.query?.id }));
     } else {
-      const { page, title, category } = req.query;
+      const { page, title, category, stock, status } = req.query;
       const pageNumber = page || 1;
       const skipCount = (pageNumber - 1) * 12;
 
@@ -52,6 +52,28 @@ export default async function handler(req, res) {
       if (propertiesArray.length) {
         for (const prop of propertiesArray) {
           findProducts[`properties.${prop.name}`] = prop.value;
+        }
+      }
+
+      if (stock) {
+        if (stock === "noStock") {
+          findProducts.$or = [
+            { stock: { $eq: 0 } },
+            { stock: { $exists: false } },
+          ];
+        } else {
+          findProducts.stock = { $gte: 1 };
+        }
+      }
+
+      if (status) {
+        if (status === "disable") {
+          findProducts.$or = [
+            { enabled: { $eq: false } },
+            { enabled: { $exists: false } },
+          ];
+        } else {
+          findProducts.enabled = { $eq: true };
         }
       }
 
