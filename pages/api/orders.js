@@ -5,11 +5,42 @@ export default async function handle(req, res) {
   const { method } = req;
   await mongooseConnect();
   if (method === "GET") {
-    if (req.query?.id) {
-      res.json(await Order.findOne({ _id: req.query?.id }));
-    } else {
-      res.json(await Order.find().sort({ createdAt: -1 }));
+    const { status, paid, page } = req.query;
+    const pageNumber = page || 1;
+    const skipCount = (pageNumber - 1) * 2;
+
+    const findOrders = {};
+
+    if (status) {
+      if (status === "no") {
+        findOrders.$or = [
+          { delivered: { $eq: false } },
+          { delivered: { $eq: null } },
+          { delivered: { $exists: false } },
+        ];
+      } else {
+        findOrders.delivered = true;
+      }
     }
+
+    if (paid) {
+      if (paid === "no") {
+        findOrders.$or = [
+          { paid: { $eq: false } },
+          { paid: { $eq: null } },
+          { paid: { $exists: false } },
+        ];
+      } else {
+        findOrders.paid = true;
+      }
+    }
+
+    res.json(
+      await Order.find(findOrders)
+        .sort({ createdAt: -1 })
+        .skip(skipCount)
+        .limit(2)
+    );
   }
   if (method === "PUT") {
     const { status, _id } = req.body;
