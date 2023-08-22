@@ -5,9 +5,9 @@ export default async function handle(req, res) {
   const { method } = req;
   await mongooseConnect();
   if (method === "GET") {
-    const { status, paid, page } = req.query;
+    const { status, paid, searchEmail, page } = req.query;
     const pageNumber = page || 1;
-    const skipCount = (pageNumber - 1) * 2;
+    const skipCount = (pageNumber - 1) * 10;
 
     const findOrders = {};
 
@@ -34,12 +34,17 @@ export default async function handle(req, res) {
         findOrders.paid = true;
       }
     }
+    if (searchEmail) {
+      findOrders.email = {
+        $regex: new RegExp(searchEmail, "i"),
+      };
+    }
 
     res.json(
       await Order.find(findOrders)
         .sort({ createdAt: -1 })
         .skip(skipCount)
-        .limit(2)
+        .limit(10)
     );
   }
   if (method === "PUT") {

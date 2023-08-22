@@ -1,8 +1,13 @@
 import handleProductProp from "@/functions/handleProductProp";
 
-export default function PropertiesProduct({propertiesToFill, properties, setProperties, classname}) {
+export default function PropertiesProduct({
+  propertiesToFill,
+  properties,
+  setProperties,
+  classname,
+}) {
   return (
-    <div className={classname} >
+    <div className={classname}>
       {propertiesToFill?.map((p, index) => (
         <div key={index}>
           <label>{p.name[0].toUpperCase() + p.name.substring(1)}</label>
@@ -12,6 +17,8 @@ export default function PropertiesProduct({propertiesToFill, properties, setProp
               onChange={(ev) => {
                 handleProductProp(p.name, ev.target.value, setProperties);
               }}
+              className={classname?.includes("text-center") ? "select-def" : ""}
+              style={{ minWidth: "170px" }}
             >
               <option value={""}>All</option>
               {p.values.map((v, index) => (

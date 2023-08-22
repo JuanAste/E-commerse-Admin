@@ -25,13 +25,8 @@ function UsersPage({ swal }) {
     axios
       .get("/api/users" + data)
       .then((res) => {
-        if (!res.data.length) {
-          setPage(page - 1);
-          setDisabledButton(false);
-        } else {
-          setUsers(res.data);
-          setDisabledButton(false);
-        }
+        setUsers(res.data);
+        setDisabledButton(false);
       })
       .catch((error) => console.log(error));
   }
@@ -185,6 +180,11 @@ function UsersPage({ swal }) {
                   ))}
               </tbody>
             </table>
+            <div>
+              {!users?.length && (
+                <h1 className=" text-center mt-4">No hay mas usuarios</h1>
+              )}
+            </div>
             <Paginate
               page={page}
               setPage={setPage}

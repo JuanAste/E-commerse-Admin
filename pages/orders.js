@@ -1,3 +1,4 @@
+import ButtonSearchIcon from "@/components/ButtonSearchIcon";
 import Layout from "@/components/Layout";
 import Paginate from "@/components/Paginate";
 import axios from "axios";
@@ -10,22 +11,20 @@ export default function OrdersPage() {
   const [paid, setPaid] = useState("");
   const [status, setStatus] = useState("");
 
+  // search
+  const [searchEmail, setSearchEmail] = useState("");
+  const [searchValue, setSearchValue] = useState("");
+
   useEffect(() => {
     axios
       .get(`/api/orders`, {
-        params: { page, paid, status },
+        params: { page, paid, status, searchEmail },
       })
       .then((response) => {
-        if (!response.data.length) {
-          setPage(page > 1 ? page - 1 : page);
-          setDisabledButton(false);
-          setOrders(response.data);
-        } else {
-          setOrders(response.data);
-          setDisabledButton(false);
-        }
+        setOrders(response.data);
+        setDisabledButton(false);
       });
-  }, [page, paid, status]);
+  }, [page, paid, status, searchEmail]);
 
   async function statusClick(order) {
     const data = { status: !order.delivered, _id: order._id };
@@ -42,16 +41,37 @@ export default function OrdersPage() {
     await axios.put("/api/orders", data);
   }
 
+  function onClickSearch() {
+    setSearchEmail(searchValue);
+  }
+
   return (
     <Layout>
       <h1>Orders</h1>
-      <div className="text-center">
-        <input type="text" className=" w-1/2" placeholder="Search email user" />
+      <div className="flex mt-4 justify-center">
+        <input
+          type="text"
+          className=" w-1/2"
+          placeholder="Search email user"
+          value={searchValue}
+          onChange={(ev) => setSearchValue(ev.target.value)}
+          onKeyDown={(ev) => {
+            if (ev.key === "Enter") {
+              onClickSearch();
+            }
+          }}
+        />
+        <div>
+          <ButtonSearchIcon functionEjec={onClickSearch} />
+        </div>
       </div>
       <div className="flex justify-center gap-5">
         <div className=" w-1/3 text-center">
           <label>Paid</label>
-          <select onChange={(ev) => setPaid(ev.target.value)}>
+          <select
+            onChange={(ev) => setPaid(ev.target.value)}
+            className="select-def"
+          >
             <option value="">All</option>
             <option value="yes">Paid</option>
             <option value="no">Unpaid</option>
@@ -59,14 +79,17 @@ export default function OrdersPage() {
         </div>
         <div className=" w-1/3 text-center">
           <label>Status</label>
-          <select onChange={(ev) => setStatus(ev.target.value)}>
+          <select
+            onChange={(ev) => setStatus(ev.target.value)}
+            className="select-def"
+          >
             <option value="">All</option>
             <option value="yes">Delivered</option>
             <option value="no">Undelivered</option>
           </select>
         </div>
       </div>
-      <table className="basic">
+      <table className="basic mt-2">
         <thead>
           <tr>
             <th>Date</th>
@@ -115,6 +138,7 @@ export default function OrdersPage() {
             ))}
         </tbody>
       </table>
+      <div>{!orders?.length && <h1 className=" text-center mt-4" >No hay mas ordenes</h1>}</div>
       <div>
         <Paginate
           page={page}
@@ -122,7 +146,7 @@ export default function OrdersPage() {
           disabledButton={disabledButton}
           setDisabledButton={setDisabledButton}
           params={orders}
-          amount={2}
+          amount={10}
         />
       </div>
     </Layout>
