@@ -18,7 +18,7 @@ export default function PropertiesProduct({
                 handleProductProp(p.name, ev.target.value, setProperties);
               }}
               className={classname?.includes("text-center") ? "select-def" : ""}
-              style={{ minWidth: "170px" }}
+              style={{ minWidth: "150px" }}
             >
               <option value={""}>All</option>
               {p.values.map((v, index) => (

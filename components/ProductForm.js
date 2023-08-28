@@ -130,7 +130,7 @@ export default function ProductForm({
         </ReactSortable>
         {isUpload && (
           <div className="h-24 flex items-center">
-            <Spinner />
+            <Spinner size={60} />
           </div>
         )}
         <label

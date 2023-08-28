@@ -2,6 +2,9 @@ import ButtonSearchIcon from "@/components/ButtonSearchIcon";
 import Layout from "@/components/Layout";
 import Paginate from "@/components/Paginate";
 import PropertiesProduct from "@/components/PropertiesProdutc";
+import Spinner from "@/components/Spinner";
+import EditIcon from "@/components/icons/EditIcon";
+import TrashIcon from "@/components/icons/TrashIcon";
 import propertiesToFillFunc from "@/functions/propertiesToFillFunc";
 import axios from "axios";
 import Link from "next/link";
@@ -12,6 +15,7 @@ export default function Products() {
   const [categories, setCategories] = useState([]);
   const [page, setPage] = useState(1);
   const [disabledButton, setDisabledButton] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   //filters
   const [searchTitle, setSearchTitle] = useState("");
@@ -21,11 +25,15 @@ export default function Products() {
   const [status, setStatus] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     getServerProducts();
+  }, [page, category, properties, stock, status]);
+
+  useEffect(() => {
     axios.get("/api/categories").then((result) => {
       setCategories(result.data);
     });
-  }, [page, category, properties, stock, status]);
+  }, []);
 
   function getServerProducts() {
     let data = `?page=${page}`;
@@ -55,6 +63,7 @@ export default function Products() {
       .get("/api/products" + data)
       .then((response) => {
         setProducts(response.data);
+        setLoading(false);
         setDisabledButton(false);
       })
       .catch((error) => console.log(error));
@@ -84,7 +93,7 @@ export default function Products() {
       </Link>
       <div>
         <div>
-          <div className=" flex mt-4 justify-center">
+          <div className="flex mt-4 justify-center">
             <input
               onKeyDown={(ev) => {
                 if (ev.key === "Enter") {
@@ -95,7 +104,7 @@ export default function Products() {
               placeholder="Search product name"
               value={searchTitle}
               onChange={(ev) => setSearchTitle(ev.target.value)}
-              className=" h-10  w-96"
+              className=" h-10 w-full md:w-1/5"
             />
             <div>
               <ButtonSearchIcon functionEjec={getServerProducts} />
@@ -103,7 +112,7 @@ export default function Products() {
           </div>
 
           <div className=" text-center flex gap-5 flex-wrap justify-center ">
-            <div className=" w-1/4">
+            <div className="w-full  md:w-1/5">
               <label>Category</label>
               <select
                 value={category}
@@ -160,89 +169,115 @@ export default function Products() {
               propertiesToFill={propertiesToFill}
               properties={properties}
               setProperties={setProperties}
-              classname={"flex flex-wrap text-center gap-5 "}
+              classname={"flex text-center gap-5 w-1/4"}
             />
           )}
         </div>
       </div>
 
-      <div style={{ minHeight: "530px" }}>
+      <div style={{ minHeight: "565px" }}>
         <table className="basic mt-2">
           <thead>
             <tr>
               <td>Product name</td>
-              <td>Stock</td>
+              <td className=" hidden md:table-cell">Stock</td>
               <td>status</td>
               <td></td>
             </tr>
           </thead>
+
           <tbody>
-            {products.map((product, index) => (
-              <tr key={index}>
-                <td>{product.title}</td>
-                <td>{product.stock || 0}</td>
-                <td>
-                  <button
-                    className={
-                      (product.enabled ? "btn-green" : "btn-red") + " mb-1"
-                    }
-                    onClick={() => enableProduct(product)}
-                  >
-                    {product.enabled ? "enable" : "disable"}
-                  </button>
-                </td>
-                <td>
-                  <Link
-                    className="btn-primary mb-1"
-                    href={"/products/edit/" + product._id}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-4 h-4"
+            {!loading &&
+              products?.map((product, index) => (
+                <tr key={index}>
+                  <td>
+                    {product.title}
+                    <label className="md:hidden">
+                      {" "}
+                      - X{product.stock || 0}
+                    </label>
+                  </td>
+                  <td className=" hidden md:table-cell mt-2">{product.stock || 0}</td>
+                  <td>
+                    <button
+                      className={
+                        (product.enabled ? "btn-green" : "btn-red") + " mb-1"
+                      }
+                      onClick={() => enableProduct(product)}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                      />
-                    </svg>
-                    Edit
-                  </Link>
-                  <Link
-                    className="btn-red"
-                    href={"/products/delete/" + product._id}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-4 h-4"
+                      {product.enabled ? (
+                        <div className="flex">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-6 h-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span className="hidden md:flex ml-2"> enable</span>
+                        </div>
+                      ) : (
+                        <div className="flex">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-6 h-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span className="hidden md:flex ml-2">disable</span>
+                        </div>
+                      )}
+                    </button>
+                  </td>
+                  <td>
+                    <Link
+                      className="btn-primary mb-1"
+                      href={"/products/edit/" + product._id}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                      />
-                    </svg>
-                    Delete
-                  </Link>
-                </td>
-              </tr>
-            ))}
+                      <EditIcon />
+                      <span className="hidden md:flex ml-2"> Edit</span>
+                    </Link>
+                    <Link
+                      className="btn-red"
+                      href={"/products/delete/" + product._id}
+                    >
+                      <TrashIcon />
+                      <span className="hidden md:flex ml-2"> Delete</span>
+                    </Link>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
-      </div>
 
-      <div>
-        {!products?.length && (
-          <h1 className=" text-center mt-4">No hay mas productos</h1>
-        )}
+        <div>
+          {loading ? (
+            <div className=" flex justify-center items-center mt-48">
+              <Spinner size={100} />
+            </div>
+          ) : null}
+        </div>
+
+        <div>
+          {!products?.length && !loading && (
+            <h1 className=" text-center mt-4">No results found</h1>
+          )}
+        </div>
       </div>
 
       <Paginate

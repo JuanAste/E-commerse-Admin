@@ -1,4 +1,7 @@
 import Layout from "@/components/Layout";
+import Spinner from "@/components/Spinner";
+import EditIcon from "@/components/icons/EditIcon";
+import TrashIcon from "@/components/icons/TrashIcon";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { withSwal } from "react-sweetalert2";
@@ -9,6 +12,7 @@ function Categories({ swal }) {
   const [categories, setCategories] = useState([]);
   const [editedCategory, setEditedCategory] = useState(null);
   const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchCategories();
@@ -17,6 +21,7 @@ function Categories({ swal }) {
   function fetchCategories() {
     axios.get("/api/categories").then((result) => {
       setCategories(result.data);
+      setLoading(false)
     });
   }
 
@@ -193,7 +198,8 @@ function Categories({ swal }) {
         </div>
       </form>
       {!editedCategory && (
-        <table className="basic mt-4">
+        <div>
+        <table className="basic mt-4 md:max-w-lg">
           <thead>
             <tr>
               <td>Category Name</td>
@@ -207,25 +213,36 @@ function Categories({ swal }) {
                 <tr key={category._id}>
                   <td>{category.name}</td>
                   <td>{category.parent?.name}</td>
-                  <td className="text-center"  >
+                  <td className="md:flex md:gap-5 justify-center" >
                     <button
-                      className="btn-primary mr-1 mb-1"
+                      className="btn-primary flex items-center mb-1"
                       onClick={() => editCategory(category)}
                     >
-                      Edit
+                      <EditIcon />
+                      <lable className="hidden md:flex ml-2"> Edit</lable>
                     </button>
                     <button
-                      className="btn-red"
+                      className="btn-red flex items-center "
                       onClick={() => deleteCategory(category)}
                     >
-                      Delete
+                      <TrashIcon />
+                      <span className="hidden md:flex ml-2"> Delete</span>
                     </button>
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
+         <div>
+         {loading ? (
+           <div className=" ml-24 flex items-center mt-20 md:ml-48">
+             <Spinner size={100} />
+           </div>
+         ) : null}
+       </div>
+       </div>
       )}
+   
     </Layout>
   );
 }

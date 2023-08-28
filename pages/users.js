@@ -105,8 +105,8 @@ function UsersPage({ swal }) {
               <button className="btn-default mt-1 ">New admin</button>
             </form>
           </div>
-          <div>
-            <table className="basic mt-4">
+          <div className=" flex justify-center">
+            <table className="basic mt-4 max-w-xs md:max-w-lg">
               <thead>
                 <tr>
                   <td>Admin email</td>
@@ -117,7 +117,7 @@ function UsersPage({ swal }) {
                 {!!usersAdmin.length &&
                   usersAdmin.map((user) => (
                     <tr key={user._id}>
-                      <td>{user.email}</td>
+                      <td className=" text-xs md:text-base ">{user.email}</td>
                       <td>
                         <button
                           className="btn-red"
@@ -142,7 +142,7 @@ function UsersPage({ swal }) {
                 }}
                 value={searchEmail}
                 type="text"
-                className=" w-96"
+                className=" w-1/2"
                 placeholder="Search user (email)"
               />
               <button onClick={() => fetchUsers()} className="btn-default ml-4">
@@ -151,23 +151,27 @@ function UsersPage({ swal }) {
             </div>
           </div>
           <div>
-            <table className="basic mt-4">
+            <table className="basic mt-4 max-w-xs md:max-w-full ">
               <thead>
                 <tr>
                   <td>email</td>
-                  <td>name</td>
-                  <td>postal code</td>
-                  <td>status</td>
+                  <td className="hidden md:table-cell ">name</td>
+                  <td className="hidden md:table-cell">postal code</td>
+                  <td></td>
                 </tr>
               </thead>
               <tbody>
                 {!!users.length &&
                   users.map((user) => (
                     <tr key={user._id}>
-                      <td>{user.email}</td>
-                      <td>{user.name}</td>
-                      <td>{user.postalCode || "Undefined"}</td>
-                      <td className="text-center">
+                      <td className=" text-xs md:text-base">{user.email}</td>
+                      <td className=" text-xs  md:text-base hidden md:table-cell">
+                        {user.name}
+                      </td>
+                      <td className=" text-xs md:text-base hidden md:table-cell">
+                        {user.postalCode || "Undefined"}
+                      </td>
+                      <td className="text-center text-xs md:text-base ">
                         <button
                           className={user.ban ? "btn-green" : "btn-red"}
                           style={{ minWidth: "80px" }}

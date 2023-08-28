@@ -10,7 +10,9 @@ export default function Paginate({
     <div className="flex gap-8 justify-center mt-3">
       <button
         disabled={page === 1}
-        onClick={() => setPage(page - 1)}
+        onClick={() => {
+          setPage(page - 1);
+        }}
         className="btn-primary"
       >
         {page - 1}
