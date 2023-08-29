@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Spinner from "./Spinner";
+import Spinner from "../Spinner";
 import { ReactSortable } from "react-sortablejs";
 import propertiesToFillFunc from "@/functions/propertiesToFillFunc";
 import PropertiesProduct from "./PropertiesProdutc";

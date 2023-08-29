@@ -5,7 +5,10 @@ export default async function handle(req, res) {
   const { method } = req;
   await mongooseConnect();
   if (method === "GET") {
-    const { status, paid, searchEmail, page } = req.query;
+    const { status, paid, searchEmail, page, id } = req.query;
+    if(id){
+      res.json(await Order.findOne({ _id: id }))
+    }else{
     const pageNumber = page || 1;
     const skipCount = (pageNumber - 1) * 10;
 
@@ -45,7 +48,7 @@ export default async function handle(req, res) {
         .sort({ createdAt: -1 })
         .skip(skipCount)
         .limit(10)
-    );
+    );}
   }
   if (method === "PUT") {
     const { status, _id } = req.body;

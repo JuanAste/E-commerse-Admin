@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Logo from "./icons/Logo";
 
-export default function Nav({ show }) {
+export default function Nav({ show, setShowNav }) {
   const inactiveLink = "flex gap-1 p-1";
   const activeLink = inactiveLink + " bg-white text-blue-900 rounded-lg";
   const router = useRouter();
@@ -12,6 +12,15 @@ export default function Nav({ show }) {
   async function logout() {
     await router.push("/");
     await signOut();
+  }
+
+  function closeMenu(ev) {
+    const targetPath = ev.target.getAttribute("href");
+    if (router.pathname === targetPath && show) {
+      setShowNav(false);
+    } else {
+      return false;
+    }
   }
 
   return (
@@ -27,6 +36,7 @@ export default function Nav({ show }) {
       <nav className="flex flex-col gap-2">
         <Link
           href={"/"}
+          onClick={closeMenu}
           className={pathname === "/" ? activeLink : inactiveLink}
         >
           <svg
@@ -47,6 +57,7 @@ export default function Nav({ show }) {
         </Link>
         <Link
           href={"/products"}
+          onClick={closeMenu}
           className={pathname.includes("/products") ? activeLink : inactiveLink}
         >
           <svg
@@ -67,6 +78,7 @@ export default function Nav({ show }) {
         </Link>
         <Link
           href={"/categories"}
+          onClick={closeMenu}
           className={
             pathname.includes("/categories") ? activeLink : inactiveLink
           }
@@ -89,6 +101,7 @@ export default function Nav({ show }) {
         </Link>
         <Link
           href={"/orders"}
+          onClick={closeMenu}
           className={pathname.includes("/orders") ? activeLink : inactiveLink}
         >
           <svg
@@ -109,6 +122,7 @@ export default function Nav({ show }) {
         </Link>
         <Link
           href={"/users"}
+          onClick={closeMenu}
           className={pathname.includes("/users") ? activeLink : inactiveLink}
         >
           <svg

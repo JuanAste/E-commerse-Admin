@@ -1,5 +1,6 @@
 import Layout from "@/components/Layout";
 import Paginate from "@/components/Paginate";
+import Spinner from "@/components/Spinner";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { withSwal } from "react-sweetalert2";
@@ -11,6 +12,8 @@ function UsersPage({ swal }) {
   const [searchEmail, setSearchEmail] = useState("");
   const [page, setPage] = useState(1);
   const [disabledButton, setDisabledButton] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadingAdmin, setLoadingAdmin] = useState(true);
 
   useEffect(() => {
     fetchAdmins();
@@ -18,6 +21,7 @@ function UsersPage({ swal }) {
   }, []);
 
   function fetchUsers() {
+    setLoading(true);
     let data = `?page=${page}`;
     if (searchEmail) {
       data += "&&email=" + searchEmail;
@@ -27,6 +31,7 @@ function UsersPage({ swal }) {
       .then((res) => {
         setUsers(res.data);
         setDisabledButton(false);
+        setLoading(false);
       })
       .catch((error) => console.log(error));
   }
@@ -36,6 +41,7 @@ function UsersPage({ swal }) {
       .get("/api/admins")
       .then((res) => {
         setUsersAdmin(res.data);
+        setLoadingAdmin(false);
       })
       .catch((error) => console.log(error));
   }
@@ -113,23 +119,32 @@ function UsersPage({ swal }) {
                   <td></td>
                 </tr>
               </thead>
-              <tbody>
-                {!!usersAdmin.length &&
-                  usersAdmin.map((user) => (
-                    <tr key={user._id}>
-                      <td className=" text-xs md:text-base ">{user.email}</td>
-                      <td>
-                        <button
-                          className="btn-red"
-                          onClick={() => deleteUser(user)}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
+              {!loadingAdmin && (
+                <tbody>
+                  {!!usersAdmin.length &&
+                    usersAdmin.map((user) => (
+                      <tr key={user._id}>
+                        <td className=" text-xs md:text-base ">{user.email}</td>
+                        <td>
+                          <button
+                            className="btn-red"
+                            onClick={() => deleteUser(user)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              )}
             </table>
+          </div>
+          <div>
+            {loadingAdmin ? (
+              <div className=" flex justify-center items-center mt-5">
+                <Spinner size={60} />
+              </div>
+            ) : null}
           </div>
         </div>
         <div>
@@ -138,7 +153,13 @@ function UsersPage({ swal }) {
             <div>
               <input
                 onChange={(ev) => {
-                  setSearchEmail(ev.target.value);
+                  const email = ev.target.value;
+                  setSearchEmail(email);
+                }}
+                onKeyDown={(ev) => {
+                  if (ev.key === "Enter") {
+                    fetchUsers();
+                  }
                 }}
                 value={searchEmail}
                 type="text"
@@ -160,30 +181,39 @@ function UsersPage({ swal }) {
                   <td></td>
                 </tr>
               </thead>
-              <tbody>
-                {!!users.length &&
-                  users.map((user) => (
-                    <tr key={user._id}>
-                      <td className=" text-xs md:text-base">{user.email}</td>
-                      <td className=" text-xs  md:text-base hidden md:table-cell">
-                        {user.name}
-                      </td>
-                      <td className=" text-xs md:text-base hidden md:table-cell">
-                        {user.postalCode || "Undefined"}
-                      </td>
-                      <td className="text-center text-xs md:text-base ">
-                        <button
-                          className={user.ban ? "btn-green" : "btn-red"}
-                          style={{ minWidth: "80px" }}
-                          onClick={() => banUser(user)}
-                        >
-                          {user.ban ? "Unban" : "Ban"}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
+              {!loading && (
+                <tbody>
+                  {!!users.length &&
+                    users.map((user) => (
+                      <tr key={user._id}>
+                        <td className=" text-xs md:text-base">{user.email}</td>
+                        <td className=" text-xs  md:text-base hidden md:table-cell">
+                          {user.name}
+                        </td>
+                        <td className=" text-xs md:text-base hidden md:table-cell">
+                          {user.postalCode || "Undefined"}
+                        </td>
+                        <td className="text-center text-xs md:text-base ">
+                          <button
+                            className={user.ban ? "btn-green" : "btn-red"}
+                            style={{ minWidth: "80px" }}
+                            onClick={() => banUser(user)}
+                          >
+                            {user.ban ? "Unban" : "Ban"}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              )}
             </table>
+            <div>
+              {loading ? (
+                <div className=" flex justify-center items-center mt-5">
+                  <Spinner size={60} />
+                </div>
+              ) : null}
+            </div>
             <div>
               {!users?.length && (
                 <h1 className=" text-center mt-4">No hay mas usuarios</h1>

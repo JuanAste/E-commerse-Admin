@@ -26,7 +26,7 @@ export default function Layout({ children }) {
   }
   return (
     <div className="bg-blue-900 min-h-screen">
-      <div className="block md:hidden flex p-2 text-white">
+      <div className="block md:hidden p-2 text-white">
         <button onClick={() => setShowNav(true)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -42,11 +42,11 @@ export default function Layout({ children }) {
           </svg>
         </button>
         <div className="flex grow justify-center ">
-          <Logo />
+          <Logo setShowNav={setShowNav} />
         </div>
       </div>
       <div className=" flex">
-        <Nav show={showNav} setshow={setShowNav} />
+        <Nav show={showNav} setShowNav={setShowNav} />
         <div className="bg-white flex-grow m-2 mb-0 rounded-b-none rounded-lg p-4 min-h-screen">
           {children}
         </div>

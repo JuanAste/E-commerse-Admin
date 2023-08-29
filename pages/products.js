@@ -1,14 +1,13 @@
-import ButtonSearchIcon from "@/components/ButtonSearchIcon";
 import Layout from "@/components/Layout";
 import Paginate from "@/components/Paginate";
-import PropertiesProduct from "@/components/PropertiesProdutc";
+import PropertiesProduct from "@/components/product/PropertiesProdutc";
 import Spinner from "@/components/Spinner";
-import EditIcon from "@/components/icons/EditIcon";
-import TrashIcon from "@/components/icons/TrashIcon";
 import propertiesToFillFunc from "@/functions/propertiesToFillFunc";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ProductTable from "@/components/product/ProductTable";
+import ProductFilter from "@/components/product/ProductFilter";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -25,7 +24,6 @@ export default function Products() {
   const [status, setStatus] = useState("");
 
   useEffect(() => {
-    setLoading(true);
     getServerProducts();
   }, [page, category, properties, stock, status]);
 
@@ -36,6 +34,7 @@ export default function Products() {
   }, []);
 
   function getServerProducts() {
+    setLoading(true);
     let data = `?page=${page}`;
 
     if (searchTitle) {
@@ -92,75 +91,17 @@ export default function Products() {
         Add new product
       </Link>
       <div>
-        <div>
-          <div className="flex mt-4 justify-center">
-            <input
-              onKeyDown={(ev) => {
-                if (ev.key === "Enter") {
-                  getServerProducts();
-                }
-              }}
-              type="text"
-              placeholder="Search product name"
-              value={searchTitle}
-              onChange={(ev) => setSearchTitle(ev.target.value)}
-              className=" h-10 w-full md:w-1/5"
-            />
-            <div>
-              <ButtonSearchIcon functionEjec={getServerProducts} />
-            </div>
-          </div>
-
-          <div className=" text-center flex gap-5 flex-wrap justify-center ">
-            <div className="w-full  md:w-1/5">
-              <label>Category</label>
-              <select
-                value={category}
-                onChange={(ev) => {
-                  setCategory(ev.target.value);
-                  if (!ev.target.value) {
-                    setProperties("");
-                  }
-                }}
-                className="select-def"
-              >
-                <option value={""}>Uncategorized</option>
-                {categories.length &&
-                  categories.map((category) => (
-                    <option key={category._id} value={category._id}>
-                      {category.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-            <div className=" w-1/4">
-              <label>Stock</label>
-              <select
-                onChange={(ev) => {
-                  setStock(ev.target.value);
-                }}
-                className="select-def"
-              >
-                <option value="">All</option>
-                <option value="withStock">With stock</option>
-                <option value="noStock">No stock</option>
-              </select>
-            </div>
-            <div className=" w-1/4">
-              <label>Status</label>
-              <select
-                onChange={(ev) => {
-                  setStatus(ev.target.value);
-                }}
-                className="select-def"
-              >
-                <option value="">All</option>
-                <option value="enable">Enable</option>
-                <option value="disable">Disable</option>
-              </select>
-            </div>
-          </div>
-        </div>
+        <ProductFilter
+          getServerProducts={getServerProducts}
+          searchTitle={searchTitle}
+          setSearchTitle={setSearchTitle}
+          categories={categories}
+          category={category}
+          setCategory={setCategory}
+          setProperties={setProperties}
+          setStock={setStock}
+          setStatus={setStatus}
+        />
       </div>
       <div>
         <div style={{ minHeight: "80px" }}>
@@ -176,94 +117,11 @@ export default function Products() {
       </div>
 
       <div style={{ minHeight: "565px" }}>
-        <table className="basic mt-2">
-          <thead>
-            <tr>
-              <td>Product name</td>
-              <td className=" hidden md:table-cell">Stock</td>
-              <td>status</td>
-              <td></td>
-            </tr>
-          </thead>
-
-          <tbody>
-            {!loading &&
-              products?.map((product, index) => (
-                <tr key={index}>
-                  <td>
-                    {product.title}
-                    <label className="md:hidden">
-                      {" "}
-                      - X{product.stock || 0}
-                    </label>
-                  </td>
-                  <td className=" hidden md:table-cell mt-2">{product.stock || 0}</td>
-                  <td>
-                    <button
-                      className={
-                        (product.enabled ? "btn-green" : "btn-red") + " mb-1"
-                      }
-                      onClick={() => enableProduct(product)}
-                    >
-                      {product.enabled ? (
-                        <div className="flex">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-6 h-6"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          <span className="hidden md:flex ml-2"> enable</span>
-                        </div>
-                      ) : (
-                        <div className="flex">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-6 h-6"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          <span className="hidden md:flex ml-2">disable</span>
-                        </div>
-                      )}
-                    </button>
-                  </td>
-                  <td>
-                    <Link
-                      className="btn-primary mb-1"
-                      href={"/products/edit/" + product._id}
-                    >
-                      <EditIcon />
-                      <span className="hidden md:flex ml-2"> Edit</span>
-                    </Link>
-                    <Link
-                      className="btn-red"
-                      href={"/products/delete/" + product._id}
-                    >
-                      <TrashIcon />
-                      <span className="hidden md:flex ml-2"> Delete</span>
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+        <ProductTable
+          enableProduct={enableProduct}
+          products={products}
+          loading={loading}
+        />
 
         <div>
           {loading ? (
