@@ -68,3 +68,11 @@ table.basic a {
 .select-def {
   @apply text-center shadow-md;
 }
+
+.userDetail {
+  @apply col-span-1 md:col-span-2 lg:col-span-1 rounded-md border bg-gray-200 p-14 shadow-md;
+}
+
+.userDetail h4 {
+  @apply mb-3 text-start bg-white p-3 rounded-md;
+}

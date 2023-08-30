@@ -63,7 +63,7 @@ export default function OrderTable({ orders, statusClick, loading }) {
                           </span>
                         </div>
                       ) : (
-                        <div className=" flex items-center justify-cente">
+                        <div className=" flex items-center justify-center">
                           <DisableIcon />
                           <span className="hidden md:flex md:ml-2">
                             Undelivered

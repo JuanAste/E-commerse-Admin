@@ -1,5 +1,6 @@
 import Layout from "@/components/Layout";
 import Spinner from "@/components/Spinner";
+import CategoriesTable from "@/components/categories/categoriesTable";
 import EditIcon from "@/components/icons/EditIcon";
 import TrashIcon from "@/components/icons/TrashIcon";
 import axios from "axios";
@@ -21,7 +22,7 @@ function Categories({ swal }) {
   function fetchCategories() {
     axios.get("/api/categories").then((result) => {
       setCategories(result.data);
-      setLoading(false)
+      setLoading(false);
     });
   }
 
@@ -199,50 +200,20 @@ function Categories({ swal }) {
       </form>
       {!editedCategory && (
         <div>
-        <table className="basic mt-4 md:max-w-lg">
-          <thead>
-            <tr>
-              <td>Category Name</td>
-              <td>Parent category</td>
-              <td></td>
-            </tr>
-          </thead>
-          <tbody>
-            {!!categories?.length &&
-              categories.map((category) => (
-                <tr key={category._id}>
-                  <td>{category.name}</td>
-                  <td>{category.parent?.name}</td>
-                  <td className="md:flex md:gap-5 justify-center" >
-                    <button
-                      className="btn-primary flex items-center mb-1"
-                      onClick={() => editCategory(category)}
-                    >
-                      <EditIcon />
-                      <lable className="hidden md:flex ml-2"> Edit</lable>
-                    </button>
-                    <button
-                      className="btn-red flex items-center "
-                      onClick={() => deleteCategory(category)}
-                    >
-                      <TrashIcon />
-                      <span className="hidden md:flex ml-2"> Delete</span>
-                    </button>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-         <div>
-         {loading ? (
-           <div className=" ml-24 flex items-center mt-20 md:ml-48">
-             <Spinner size={100} />
-           </div>
-         ) : null}
-       </div>
-       </div>
+          <CategoriesTable
+            categories={categories}
+            editCategory={editCategory}
+            deleteCategory={deleteCategory}
+          />
+          <div>
+            {loading ? (
+              <div className=" ml-24 flex items-center mt-20 md:ml-48">
+                <Spinner size={100} />
+              </div>
+            ) : null}
+          </div>
+        </div>
       )}
-   
     </Layout>
   );
 }
