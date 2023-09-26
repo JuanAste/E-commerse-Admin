@@ -123,6 +123,7 @@ export default function ProductForm({
                   key={index}
                   className="h-24 bg-gray-200 p-1 shadow-sm rounded-sm border border-gray-300"
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={link} alt="" className="rounded-lg" />
                 </div>
               );

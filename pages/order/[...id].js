@@ -42,14 +42,18 @@ export default function OrderPage() {
               const productProps = product?.price_data?.product_data;
               return (
                 <Link
-                  href={"/products/edit/" + productProps?._id}
+                  href={"/products/edit/" + product?.product_id}
                   key={index}
-                  className=" flex flex-col items-center"
+                  className=" flex flex-col items-center rounded-lg border border-gray-400 p-3 hover:bg-white"
                 >
-                  <div className=" h-24 p-1 rounded-sm border max-w-sm">
+                  <div className=" h-24 p-1 max-w-sm">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={productProps?.image || imageErr404.src}
+                      src={
+                        productProps?.images?.length
+                          ? productProps?.images[0]
+                          : imageErr404.src
+                      }
                       alt=""
                       className="rounded-lg"
                     />
@@ -60,7 +64,7 @@ export default function OrderPage() {
                       : productProps?.name}
                   </h4>
                   <h4 className=" font-semibold">
-                    {productProps?.price || "$"}
+                    {"$" + product?.price_data?.unit_amount / 100 || "$"}
                   </h4>
                 </Link>
               );

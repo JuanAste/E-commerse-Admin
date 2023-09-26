@@ -27,7 +27,7 @@ export default function CategoriesTable({
                   onClick={() => editCategory(category)}
                 >
                   <EditIcon />
-                  <label className="hidden md:flex ml-2"> Edit</label>
+                  <span className="hidden md:flex ml-2"> Edit</span>
                 </button>
                 <button
                   className="btn-red flex items-center "

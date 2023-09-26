@@ -76,6 +76,7 @@ export default function OrderTable({ orders, statusClick, loading }) {
                     <Link
                       className="btn-primary mb-1"
                       href={"/order/" + order._id}
+                      style={{ whiteSpace: 'nowrap' }}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"

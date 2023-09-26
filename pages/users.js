@@ -17,8 +17,11 @@ function UsersPage({ swal }) {
 
   useEffect(() => {
     fetchAdmins();
-    fetchUsers();
   }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [page]);
 
   function fetchUsers() {
     setLoading(true);
@@ -172,41 +175,45 @@ function UsersPage({ swal }) {
             </div>
           </div>
           <div>
-            <table className="basic mt-4 max-w-xs md:max-w-full ">
-              <thead>
-                <tr>
-                  <td>email</td>
-                  <td className="hidden md:table-cell ">name</td>
-                  <td className="hidden md:table-cell">postal code</td>
-                  <td></td>
-                </tr>
-              </thead>
-              {!loading && (
-                <tbody>
-                  {!!users.length &&
-                    users.map((user) => (
-                      <tr key={user._id}>
-                        <td className=" text-xs md:text-base">{user.email}</td>
-                        <td className=" text-xs  md:text-base hidden md:table-cell">
-                          {user.name}
-                        </td>
-                        <td className=" text-xs md:text-base hidden md:table-cell">
-                          {user.postalCode || "Undefined"}
-                        </td>
-                        <td className="text-center text-xs md:text-base ">
-                          <button
-                            className={user.ban ? "btn-green" : "btn-red"}
-                            style={{ minWidth: "80px" }}
-                            onClick={() => banUser(user)}
-                          >
-                            {user.ban ? "Unban" : "Ban"}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              )}
-            </table>
+            <div className=" flex justify-center">
+              <table className="basic mt-4 max-w-xs md:max-w-full">
+                <thead>
+                  <tr>
+                    <td>email</td>
+                    <td className="hidden md:table-cell ">name</td>
+                    <td className="hidden md:table-cell">postal code</td>
+                    <td></td>
+                  </tr>
+                </thead>
+                {!loading && (
+                  <tbody>
+                    {!!users.length &&
+                      users.map((user) => (
+                        <tr key={user._id}>
+                          <td className=" text-xs md:text-base">
+                            {user.email}
+                          </td>
+                          <td className=" text-xs  md:text-base hidden md:table-cell">
+                            {user.name}
+                          </td>
+                          <td className=" text-xs md:text-base hidden md:table-cell">
+                            {user.postalCode || "Undefined"}
+                          </td>
+                          <td className="text-center text-xs md:text-base ">
+                            <button
+                              className={user.ban ? "btn-green" : "btn-red"}
+                              style={{ minWidth: "80px" }}
+                              onClick={() => banUser(user)}
+                            >
+                              {user.ban ? "Unban" : "Ban"}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                )}
+              </table>
+            </div>
             <div>
               {loading ? (
                 <div className=" flex justify-center items-center mt-5">
