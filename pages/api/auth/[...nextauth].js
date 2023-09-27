@@ -12,6 +12,7 @@ async function getAdmin(email) {
 }
 
 export const authOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
@@ -29,7 +30,6 @@ export const authOptions = {
       }
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
 };
 
 export default NextAuth(authOptions);
