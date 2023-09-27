@@ -40,6 +40,7 @@ export default function OrderPage() {
           <div className=" bg-gray-200  flex flex-wrap gap-10 m-4 p-5 justify-center rounded-md shadow-md ">
             {order?.line_items?.map((product, index) => {
               const productProps = product?.price_data?.product_data;
+              console.log(product);
               return (
                 <Link
                   href={"/products/edit/" + product?.product_id}
@@ -61,7 +62,7 @@ export default function OrderPage() {
                   <h4>
                     {productProps?.name.length > 15
                       ? productProps?.name.slice(0, 15) + "..."
-                      : productProps?.name}
+                      : productProps?.name} X{product.quantity}
                   </h4>
                   <h4 className=" font-semibold">
                     {"$" + product?.price_data?.unit_amount / 100 || "$"}
