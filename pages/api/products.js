@@ -16,6 +16,9 @@ export default async function handler(req, res) {
       const pageNumber = page || 1;
       const skipCount = (pageNumber - 1) * 12;
 
+      const findProducts = {};
+      const sortDirection = {};
+
       // Build array of properties
       const propertiesArray = [];
       let i = 0;
@@ -29,8 +32,6 @@ export default async function handler(req, res) {
         i++;
       }
 
-      const findProducts = {};
-
       if (title) {
         findProducts.title = {
           $regex: new RegExp(title, "i"),
@@ -39,13 +40,10 @@ export default async function handler(req, res) {
 
       if (category) {
         findProducts.category = [category];
-        // const categorydb = await Category.findById(category);
-        // if (!categorydb?.parent) {
         const categoriesParent = await Category.find({ parent: category });
         for (const categ of categoriesParent) {
           findProducts.category.push(categ._id);
         }
-        // }
       }
 
       // Add properties to the findProducts object
@@ -56,14 +54,10 @@ export default async function handler(req, res) {
       }
 
       if (stock) {
-        if (stock === "noStock") {
-          findProducts.$or = [
-            { stock: { $eq: 0 } },
-            { stock: { $eq: null } },
-            { stock: { $exists: false } },
-          ];
+        if (stock === "StockUp") {
+          sortDirection.stock = 1;
         } else {
-          findProducts.stock = { $gte: 1 };
+          sortDirection.stock = -1;
         }
       }
 
@@ -79,6 +73,7 @@ export default async function handler(req, res) {
       }
 
       const products = await Product.find(findProducts)
+        .sort(sortDirection)
         .skip(skipCount)
         .limit(12);
 
