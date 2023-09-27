@@ -1,6 +1,7 @@
 import Layout from "@/components/Layout";
 import Spinner from "@/components/Spinner";
 import CategoriesTable from "@/components/categories/categoriesTable";
+import CloseIcon from "@/components/icons/CloseIcon";
 import EditIcon from "@/components/icons/EditIcon";
 import TrashIcon from "@/components/icons/TrashIcon";
 import axios from "axios";
@@ -50,7 +51,7 @@ function Categories({ swal }) {
     setParentCategory("");
     setProperties([]);
     fetchCategories();
-    setImage("")
+    setImage("");
   }
 
   function editCategory(category) {
@@ -132,7 +133,9 @@ function Categories({ swal }) {
     }
   }
 
-  console.log(image);
+  function deleteImg() {
+    setImage("");
+  }
 
   return (
     <Layout>
@@ -163,15 +166,24 @@ function Categories({ swal }) {
               ))}
           </select>
         </div>
-        <div className="flex gap-2" >
-         {!!image && <div className="h-24 bg-gray-200 p-1 shadow-sm rounded-sm border border-gray-300">
-          <img className="rounded-lg" alt="" src={image} />
-          </div>}
+        <div className="flex gap-2">
+          {!!image && (
+            <div className="h-24 bg-gray-200 p-1 shadow-sm rounded-sm border border-gray-300 relative">
+              <img className="rounded-lg" alt="" src={image} />
+              <button
+                type="button"
+                className="z-10 absolute top-1 right-1"
+                onClick={deleteImg}
+              >
+              <CloseIcon />
+              </button>
+            </div>
+          )}
           {isUpload && (
-          <div className="h-24 flex items-center">
-            <Spinner size={60} />
-          </div>
-        )}
+            <div className="h-24 flex items-center">
+              <Spinner size={60} />
+            </div>
+          )}
           <label
             className="w-24 h-24 bg-white cursor-pointer flex flex-col
          text-center items-center justify-center
