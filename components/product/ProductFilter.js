@@ -54,19 +54,6 @@ export default function ProductFilter({
           </select>
         </div>
         <div className=" w-1/4">
-          <label>Stock</label>
-          <select
-            onChange={(ev) => {
-              setStock(ev.target.value);
-            }}
-            className="select-def"
-          >
-            <option value="">All</option>
-            <option value="withStock">With stock</option>
-            <option value="noStock">No stock</option>
-          </select>
-        </div>
-        <div className=" w-1/4">
           <label>Status</label>
           <select
             onChange={(ev) => {
@@ -77,6 +64,19 @@ export default function ProductFilter({
             <option value="">All</option>
             <option value="enable">Enable</option>
             <option value="disable">Disable</option>
+          </select>
+        </div>
+        <div className=" w-1/4">
+          <label>Order</label>
+          <select
+            onChange={(ev) => {
+              setStock(ev.target.value);
+            }}
+            className="select-def"
+          >
+            <option value="">Disorderly</option>
+            <option value="StockUp">StockUp</option>
+            <option value="StockDown">StockDown</option>
           </select>
         </div>
       </div>
