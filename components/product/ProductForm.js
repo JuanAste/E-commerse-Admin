@@ -5,6 +5,8 @@ import Spinner from "../Spinner";
 import { ReactSortable } from "react-sortablejs";
 import propertiesToFillFunc from "@/functions/propertiesToFillFunc";
 import PropertiesProduct from "./PropertiesProdutc";
+import Link from "next/link";
+import CloseIcon from "../icons/CloseIcon";
 
 export default function ProductForm({
   _id,
@@ -81,6 +83,10 @@ export default function ProductForm({
     setImages(images);
   }
 
+  function deleteImg(link) {
+    setImages(images.filter((img, index) => img !== link));
+  }
+
   const propertiesToFill = propertiesToFillFunc(categories, category);
 
   return (
@@ -121,10 +127,17 @@ export default function ProductForm({
               return (
                 <div
                   key={index}
-                  className="h-24 bg-gray-200 p-1 shadow-sm rounded-sm border border-gray-300"
+                  className="h-24 bg-gray-200 p-1 shadow-sm rounded-sm border border-gray-300 relative"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={link} alt="" className="rounded-lg" />
+                  <button
+                    type="button"
+                    className="z-10 absolute top-1 right-1"
+                    onClick={() => deleteImg(link)}
+                  >
+                   <CloseIcon />
+                  </button>
                 </div>
               );
             })}
@@ -185,6 +198,11 @@ export default function ProductForm({
       >
         {enabled ? "Enabled" : "disabled"}
       </button>
+      {!!_id && (
+        <div className=" py-3">
+          <Link href={"/reviews/" + _id} className=" bg-blue-800 p-1 px-3 text-white" >Reviews</Link>
+        </div>
+      )}
       <button
         type="button"
         onClick={() => {
