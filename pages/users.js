@@ -222,7 +222,7 @@ function UsersPage({ swal }) {
               ) : null}
             </div>
             <div>
-              {!users?.length && (
+              {!users?.length && !loading && (
                 <h1 className=" text-center mt-4">No hay mas usuarios</h1>
               )}
             </div>

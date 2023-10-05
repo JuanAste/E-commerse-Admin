@@ -68,21 +68,6 @@ export default function Products() {
       .catch((error) => console.log(error));
   }
 
-  async function enableProduct(product) {
-    setProducts((prev) => {
-      const update = prev.map((prod) => {
-        if (prod._id === product._id) {
-          return { ...prod, enabled: !product.enabled };
-        } else {
-          return prod;
-        }
-      });
-      return update;
-    });
-    const data = { _id: product._id, enabled: !product.enabled };
-    await axios.put("/api/products", data).catch((error) => console.log(error));
-  }
-
   const propertiesToFill = propertiesToFillFunc(categories, category);
 
   return (
@@ -118,7 +103,7 @@ export default function Products() {
 
       <div style={{ minHeight: "565px" }}>
         <ProductTable
-          enableProduct={enableProduct}
+          setProducts={setProducts}
           products={products}
           loading={loading}
         />

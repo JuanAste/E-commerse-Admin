@@ -1,8 +1,9 @@
 import Link from "next/link";
 import DisableIcon from "../icons/DisableIcon";
 import EnableIcon from "../icons/EnableIcon";
+import statusClick from "@/functions/statusClick";
 
-export default function OrderTable({ orders, statusClick, loading }) {
+export default function OrderTable({ orders, loading, setOrders }) {
   return (
     <table className="basic mt-2">
       <thead>
@@ -52,7 +53,7 @@ export default function OrderTable({ orders, statusClick, loading }) {
                         " mb-1 md:w-36"
                       }
                       onClick={() => {
-                        statusClick(order);
+                        statusClick(order, setOrders);
                       }}
                     >
                       {order.delivered ? (

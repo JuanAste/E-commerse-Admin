@@ -18,7 +18,7 @@ export default function DeleteProductPage() {
   }, []);
 
   function goBack() {
-    router.push("/products");
+    router.back();
   }
 
   async function deleteProduct() {

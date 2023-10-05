@@ -3,8 +3,9 @@ import EditIcon from "../icons/EditIcon";
 import TrashIcon from "../icons/TrashIcon";
 import EnableIcon from "../icons/EnableIcon";
 import DisableIcon from "../icons/DisableIcon";
+import enableProduct from "@/functions/enableProduct";
 
-export default function ProductTable({ enableProduct, products, loading }) {
+export default function ProductTable({ products, loading, setProducts }) {
   return (
     <table className="basic mt-2">
       <thead>
@@ -32,7 +33,7 @@ export default function ProductTable({ enableProduct, products, loading }) {
                   className={
                     (product.enabled ? "btn-green" : "btn-red") + " mb-1 md:w-28"
                   }
-                  onClick={() => enableProduct(product)}
+                  onClick={() => enableProduct(product, setProducts)}
                 >
                   {product.enabled ? (
                     <div className="flex items-center">
