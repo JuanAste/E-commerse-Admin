@@ -14,21 +14,23 @@ export default function Home() {
   const [loadingOrd, setLoadingOrd] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("/api/products?stock=StockUp")
-      .then((res) => {
-        setProducts(res.data);
-        setLoading(false);
-      })
-      .catch((err) => console.log(err));
-    axios
-      .get("/api/orders?paid=si")
-      .then((res) => {
-        setOrders(res.data);
-        setLoadingOrd(false);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+    if (session) {
+      axios
+        .get("/api/products?stock=StockUp")
+        .then((res) => {
+          setProducts(res.data);
+          setLoading(false);
+        })
+        .catch((err) => console.log(err));
+      axios
+        .get("/api/orders?paid=si")
+        .then((res) => {
+          setOrders(res.data);
+          setLoadingOrd(false);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [session]);
 
   const newProd = products?.slice(0, 5);
   const newOrd = orders?.slice(0, 4);
